@@ -15,7 +15,8 @@ function mainMenu() {
   console.log("2. Agregar candidatos");
   console.log("3. Emitir voto");
   console.log("4. Ver resultados");
-  console.log("5. Salir\n");
+  console.log("5. Cerrar elección");
+  console.log("6. Salir\n");
   rl.question("Seleccione una opción: ", (option) => {
     if (option === '1') {
       crearEleccion();
@@ -26,6 +27,8 @@ function mainMenu() {
     } else if (option === '4') {
       verResultados();
     } else if (option === '5') {
+      cerrarEleccion();
+    } else if (option === '6') {
       rl.close();
     } else {
       console.log("Opción inválida.");
@@ -38,7 +41,8 @@ function crearEleccion() {
   rl.question("Nombre de la elección: ", (nombre) => {
     elecciones.push({
       nombre: nombre,
-      candidatos: []
+      candidatos: [],
+      cerrada: false
     });
     console.log(`Elección "${nombre}" creada.`);
     mainMenu();
@@ -68,6 +72,12 @@ function emitirVoto() {
   }
 
   const eleccion = elecciones[elecciones.length - 1];
+  
+  if (eleccion.cerrada) {
+    console.log(`La elección "${eleccion.nombre}" está cerrada. No se pueden emitir más votos.`);
+    mainMenu();
+    return;
+  }
 
   if (eleccion.candidatos.length === 0) {
     console.log("No hay candidatos en esta elección.");
@@ -92,6 +102,26 @@ function emitirVoto() {
   });
 }
 
+function cerrarEleccion() {
+  if (elecciones.length === 0) {
+    console.log("No hay elecciones creadas.");
+    mainMenu();
+    return;
+  }
+  
+  const eleccion = elecciones[elecciones.length - 1];
+  
+  if (eleccion.cerrada) {
+    console.log(`La elección "${eleccion.nombre}" ya está cerrada.`);
+    mainMenu();
+    return;
+  }
+  
+  eleccion.cerrada = true;
+  console.log(`Elección "${eleccion.nombre}" cerrada. No se aceptarán más votos.`);
+  mainMenu();
+}
+
 function verResultados() {
   if (elecciones.length === 0) {
     console.log("No hay elecciones creadas.");
@@ -99,7 +129,8 @@ function verResultados() {
     return;
   }
   const eleccion = elecciones[elecciones.length - 1];
-  console.log(`\n📊 Resultados para "${eleccion.nombre}":`);
+  const estado = eleccion.cerrada ? "CERRADA" : "ABIERTA";
+  console.log(`\nResultados para "${eleccion.nombre}" (${estado}):`);
   eleccion.candidatos.forEach(c => {
     console.log(`- ${c.nombre}: ${c.votos} voto(s)`);
   });
