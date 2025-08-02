@@ -42,7 +42,8 @@ function crearEleccion() {
     elecciones.push({
       nombre: nombre,
       candidatos: [],
-      cerrada: false
+      cerrada: false,
+      votantes: []
     });
     console.log(`Elección "${nombre}" creada.`);
     mainMenu();
@@ -118,20 +119,36 @@ function emitirVoto() {
       return;
     }
 
-    console.log(`\n Elección: ${eleccion.nombre}`);
-    eleccion.candidatos.forEach((c, i) => {
-      console.log(`${i + 1}. ${c.nombre}`);
-    });
-
-    rl.question("Seleccione el número del candidato: ", (num) => {
-      const idx = parseInt(num) - 1;
-      if (idx >= 0 && idx < eleccion.candidatos.length) {
-        eleccion.candidatos[idx].votos++;
-        console.log(`Voto registrado para ${eleccion.candidatos[idx].nombre}`);
-      } else {
-        console.log("Candidato inválido.");
+    rl.question("Ingrese su nombre: ", (nombreVotante) => {
+      if (!nombreVotante.trim()) {
+        console.log("Debe ingresar un nombre válido.");
+        mainMenu();
+        return;
       }
-      mainMenu();
+
+      // check si el votante ya votó
+      if (eleccion.votantes.includes(nombreVotante.trim())) {
+        console.log(`${nombreVotante} ya ha votado en esta elección.`);
+        mainMenu();
+        return;
+      }
+
+      console.log(`\nElección: ${eleccion.nombre}`);
+      eleccion.candidatos.forEach((c, i) => {
+        console.log(`${i + 1}. ${c.nombre}`);
+      });
+
+      rl.question("Seleccione el número del candidato: ", (num) => {
+        const idx = parseInt(num) - 1;
+        if (idx >= 0 && idx < eleccion.candidatos.length) {
+          eleccion.candidatos[idx].votos++;
+          eleccion.votantes.push(nombreVotante.trim());
+          console.log(`Voto registrado para ${eleccion.candidatos[idx].nombre}`);
+        } else {
+          console.log("Candidato inválido.");
+        }
+        mainMenu();
+      });
     });
   }, true); // filtrarAbiertas = true
 }
