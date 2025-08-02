@@ -103,6 +103,24 @@ function verResultados() {
   eleccion.candidatos.forEach(c => {
     console.log(`- ${c.nombre}: ${c.votos} voto(s)`);
   });
+  
+  // Issue 5: Ganador de elecciones
+  if (eleccion.candidatos.length === 0) {
+    console.log("\nNo hay candidatos en esta elección.");
+  } else {
+    const maxVotos = Math.max(...eleccion.candidatos.map(c => c.votos));
+    const ganadores = eleccion.candidatos.filter(c => c.votos === maxVotos);
+    
+    if (maxVotos === 0) {
+      console.log("\nAún no se han emitido votos.");
+    } else if (ganadores.length === 1) {
+      console.log(`\nGanador: ${ganadores[0].nombre} con ${maxVotos} voto(s)`);
+    } else {
+      const nombresGanadores = ganadores.map(g => g.nombre).join(', ');
+      console.log(`\nEmpate entre: ${nombresGanadores} con ${maxVotos} voto(s) cada uno`);
+    }
+  }
+  
   mainMenu();
 }
 
