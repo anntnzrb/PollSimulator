@@ -10,13 +10,15 @@ const rl = readline.createInterface({
 });
 
 function mainMenu() {
-  console.log("\n📋 Simulador de Votación");
-  console.log("1. Crear nueva elección");
-  console.log("2. Agregar candidatos");
-  console.log("3. Emitir voto");
-  console.log("4. Ver resultados");
-  console.log("5. Cerrar elección");
-  console.log("6. Salir\n");
+  console.log(`
+📋 Simulador de Votación
+1. Crear nueva elección
+2. Agregar candidatos
+3. Emitir voto
+4. Ver resultados
+5. Cerrar elección
+6. Salir
+`);
   rl.question("Seleccione una opción: ", (option) => {
     if (option === '1') {
       crearEleccion();
@@ -72,11 +74,11 @@ function seleccionarEleccion(callback, filtrarAbiertas = false) {
     return;
   }
 
-  console.log("\nSeleccione una elección:");
-  eleccionesFiltradas.forEach((e, i) => {
+  const listaElecciones = eleccionesFiltradas.map((e, i) => {
     const estado = e.cerrada ? "(CERRADA)" : "(ABIERTA)";
-    console.log(`${i + 1}. ${e.nombre} ${estado}`);
-  });
+    return `${i + 1}. ${e.nombre} ${estado}`;
+  }).join('\n');
+  console.log(`\nSeleccione una elección:\n${listaElecciones}`);
 
   rl.question("Número de elección: ", (num) => {
     const idx = parseInt(num) - 1;
@@ -133,10 +135,8 @@ function emitirVoto() {
         return;
       }
 
-      console.log(`\nElección: ${eleccion.nombre}`);
-      eleccion.candidatos.forEach((c, i) => {
-        console.log(`${i + 1}. ${c.nombre}`);
-      });
+      const listaCandidatos = eleccion.candidatos.map((c, i) => `${i + 1}. ${c.nombre}`).join('\n');
+      console.log(`\nElección: ${eleccion.nombre}\n${listaCandidatos}`);
 
       rl.question("Seleccione el número del candidato: ", (num) => {
         const idx = parseInt(num) - 1;
@@ -178,14 +178,15 @@ function verResultados() {
       console.log(`\nTotal de votos emitidos: ${totalVotos}`);
     }
 
-    eleccion.candidatos.forEach(c => {
+    const resultadosCandidatos = eleccion.candidatos.map(c => {
       if (totalVotos === 0) {
-        console.log(`- ${c.nombre}: ${c.votos} voto(s)`);
+        return `- ${c.nombre}: ${c.votos} voto(s)`;
       } else {
         const porcentaje = ((c.votos / totalVotos) * 100).toFixed(1);
-        console.log(`- ${c.nombre}: ${c.votos} voto(s) (${porcentaje}%)`);
+        return `- ${c.nombre}: ${c.votos} voto(s) (${porcentaje}%)`;
       }
-    });
+    }).join('\n');
+    console.log(resultadosCandidatos);
 
     // Issue 5: Ganador de elecciones
     if (eleccion.candidatos.length === 0) {
