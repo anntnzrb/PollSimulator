@@ -1,4 +1,11 @@
 // Archivo: main.js
+//
+// Funcionalidades implementadas:
+// Issue #1: Votación única por usuario - Sistema de autenticación con nombres de votantes
+// Issue #2: Mostrar porcentajes junto con resultados - Cálculo automático de porcentajes de votos
+// Issue #3: Seleccionar una elección activa - Lista de elecciones disponibles para seleccionar
+// Issue #4: Cierre manual de elecciones - Funcionalidad para cerrar elecciones y bloquear votos
+// Issue #5: Ganador de elecciones - Determinación automática de ganador o empate
 
 const readline = require('readline');
 
