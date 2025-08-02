@@ -9,6 +9,15 @@ const rl = readline.createInterface({
   output: process.stdout
 });
 
+const menuActions = {
+  '1': crearEleccion,
+  '2': agregarCandidatos,
+  '3': emitirVoto,
+  '4': verResultados,
+  '5': cerrarEleccion,
+  '6': () => rl.close()
+};
+
 function mainMenu() {
   console.log(`
 📋 Simulador de Votación
@@ -20,18 +29,9 @@ function mainMenu() {
 6. Salir
 `);
   rl.question("Seleccione una opción: ", (option) => {
-    if (option === '1') {
-      crearEleccion();
-    } else if (option === '2') {
-      agregarCandidatos();
-    } else if (option === '3') {
-      emitirVoto();
-    } else if (option === '4') {
-      verResultados();
-    } else if (option === '5') {
-      cerrarEleccion();
-    } else if (option === '6') {
-      rl.close();
+    const action = menuActions[option];
+    if (action) {
+      action();
     } else {
       console.log("Opción inválida.");
       mainMenu();
@@ -189,24 +189,31 @@ function verResultados() {
     console.log(resultadosCandidatos);
 
     // Issue 5: Ganador de elecciones
-    if (eleccion.candidatos.length === 0) {
-      console.log("\nNo hay candidatos en esta elección.");
-    } else {
-      const maxVotos = Math.max(...eleccion.candidatos.map(c => c.votos));
-      const ganadores = eleccion.candidatos.filter(c => c.votos === maxVotos);
-
-      if (maxVotos === 0) {
-        console.log("\nAún no se han emitido votos.");
-      } else if (ganadores.length === 1) {
-        console.log(`\nGanador: ${ganadores[0].nombre} con ${maxVotos} voto(s)`);
-      } else {
-        const nombresGanadores = ganadores.map(g => g.nombre).join(', ');
-        console.log(`\nEmpate entre: ${nombresGanadores} con ${maxVotos} voto(s) cada uno`);
-      }
-    }
+    console.log(determinarGanador(eleccion));
 
     mainMenu();
   });
+}
+
+function determinarGanador(eleccion) {
+  if (eleccion.candidatos.length === 0) {
+    return "\nNo hay candidatos en esta elección.";
+  }
+  
+  const maxVotos = Math.max(...eleccion.candidatos.map(c => c.votos));
+  
+  if (maxVotos === 0) {
+    return "\nAún no se han emitido votos.";
+  }
+  
+  const ganadores = eleccion.candidatos.filter(c => c.votos === maxVotos);
+  
+  if (ganadores.length === 1) {
+    return `\nGanador: ${ganadores[0].nombre} con ${maxVotos} voto(s)`;
+  }
+  
+  const nombresGanadores = ganadores.map(g => g.nombre).join(', ');
+  return `\nEmpate entre: ${nombresGanadores} con ${maxVotos} voto(s) cada uno`;
 }
 
 mainMenu();
