@@ -154,8 +154,20 @@ function verResultados() {
   seleccionarEleccion((eleccion) => {
     const estado = eleccion.cerrada ? "CERRADA" : "ABIERTA";
     console.log(`\nResultados para "${eleccion.nombre}" (${estado}):`);
+
+    const totalVotos = eleccion.candidatos.reduce((sum, c) => sum + c.votos, 0);
+
+    if (totalVotos > 0) {
+      console.log(`\nTotal de votos emitidos: ${totalVotos}`);
+    }
+
     eleccion.candidatos.forEach(c => {
-      console.log(`- ${c.nombre}: ${c.votos} voto(s)`);
+      if (totalVotos === 0) {
+        console.log(`- ${c.nombre}: ${c.votos} voto(s)`);
+      } else {
+        const porcentaje = ((c.votos / totalVotos) * 100).toFixed(1);
+        console.log(`- ${c.nombre}: ${c.votos} voto(s) (${porcentaje}%)`);
+      }
     });
 
     // Issue 5: Ganador de elecciones
